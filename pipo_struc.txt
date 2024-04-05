@@ -1,0 +1,41 @@
+//Design Code
+module d_ffpe(output reg q,output wire qbar,input clk,d);
+  always@(posedge clk)
+    begin
+      q<=d;
+    end
+  assign qbar=~q;
+endmodule
+
+
+module pipo_reg(output reg q1,q2,q3,q4, input d1,d2,d3,d4, input clk);
+  d_ffpe a1(q1,,clk,d1);
+  d_ffpe a2(q2,,clk,d2);
+  d_ffpe a3(q3,,clk,d3);
+  d_ffpe a4(q4,,clk,d4);
+endmodule
+
+//Test Bench Code
+module tb();
+  reg d1,d2,d3,d4;
+  reg clk;
+  wire q1,q2,q3,q4;
+  pipo_reg DUT(q1,q2,q3,q4,d1,d2,d3,d4,clk);
+  initial
+    begin
+      clk=1'b0;
+      forever #5 clk=~clk;
+    end
+  initial
+    begin
+      @(negedge clk) d1=1'b1;d2=1'b0;d3=1'b1;d4=1'b0;
+      @(negedge clk);
+      $finish;
+    end
+  initial
+    begin
+      $dumpfile("test.vcd");
+      $dumpvars(1);
+    end
+endmodule
+
